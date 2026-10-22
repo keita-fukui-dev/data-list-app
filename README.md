@@ -1,32 +1,40 @@
-# React + TypeScript + Vite
+# data-list-app
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+外部 API から取得したユーザーと投稿の一覧を、タブで切り替えて表示するアプリです。
+検索欄に文字を入れると、その場で一覧が絞り込まれます。
 
-Currently, two official plugins are available:
+## 何を作ったか
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **タブの切り替え**: 「ユーザー一覧」と「投稿一覧」をボタンで切り替える
+- **ユーザー一覧**: ID・名前・メールアドレスを表で表示し、名前で絞り込める
+- **投稿一覧**: ID・ユーザー ID・タイトル・内容を表で表示し、内容で絞り込める
+- **エラー表示**: データの取得に失敗したときは、エラーメッセージを表示する
 
-## React Compiler
+## 使った技術
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 / TypeScript
+- Vite（開発環境とビルド）
+- Bootstrap 5（見た目の作成）
+- axios（API からのデータ取得）
+- oxlint（コードのチェック）
+- データの取得先: [JSONPlaceholder](https://jsonplaceholder.typicode.com/)
 
-## Expanding the Oxlint configuration
+## 工夫した点
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+- **タブの値を型で限定した**
+  タブの状態を `"userList" | "postList"` という型にしました。決まった2つの値以外は入れられないので、書き間違いを防げます。
+- **絞り込みの結果を state に保存しない**
+  取得したデータと検索文字だけを state で持ち、表示する一覧はそこから毎回計算しています。同じデータを二重に持たないので、元のデータと表示がずれません。
+- **データの取得は画面の表示後に1回だけにした**
+  `useEffect` の依存配列を空にして、表示されたあとに1回だけ API を呼びます。不要な通信を防いでいます。
+- **Bootstrap のトグルボタンでタブを作った**
+  ラジオボタンとラベルを組み合わせて、どちらか一方だけが選ばれるタブにしました。
+- **使いやすさへの配慮**
+  タブを切り替えたらすぐ入力できるように、検索欄に `autoFocus` を付けました。
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## 動かし方
+
+```bash
+npm install
+npm run dev
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
